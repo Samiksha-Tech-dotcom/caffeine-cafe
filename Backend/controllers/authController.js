@@ -9,7 +9,7 @@ const sendToken = (res, user, status = 200) => {
     { expiresIn: "7d" }
   );
 
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === "production" || process.env.RENDER === "true";
 
   // Frontend (Vercel) and API (Render) are different sites in production.
   // SameSite=Lax prevents the browser sending this cookie on cross-site fetches,
@@ -79,7 +79,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === "production" || process.env.RENDER === "true";
   res.clearCookie("token", {
     httpOnly: true,
     secure: isProduction,
