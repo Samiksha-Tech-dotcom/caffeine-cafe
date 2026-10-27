@@ -60,7 +60,7 @@ const startServer = async () => {
   await connectDB();
   await ensureTables();
 
-  app.listen(PORT, () => {
+  app.listen(PORT,"0.0.0.0", () => {
     console.log(`Caffeine server running on port ${PORT}`);
   });
 };
