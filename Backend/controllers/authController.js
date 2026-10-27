@@ -13,6 +13,7 @@ const sendToken = (res, user, status = 200) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
+    path:"/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -72,10 +73,21 @@ export const login = async (req, res) => {
   }
 };
 
+
 export const logout = (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ success: true, message: "Logged out" });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out",
+  });
 };
+
 
 export const getMe = (req, res) => {
   const user = req.user;
