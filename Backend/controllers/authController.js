@@ -9,10 +9,16 @@ const sendToken = (res, user, status = 200) => {
     { expiresIn: "7d" }
   );
 
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // Frontend (Vercel) and API (Render) are different sites in production.
+  // SameSite=Lax prevents the browser sending this cookie on cross-site fetches,
+  // so protected cart/order/booking requests appear logged out (401).
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -73,7 +79,13 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("token");
+  const isProduction = process.env.NODE_ENV === "production";
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    path: "/",
+  });
   res.status(200).json({ success: true, message: "Logged out" });
 };
 
